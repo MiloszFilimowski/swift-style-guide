@@ -96,7 +96,7 @@ It is strongly misadvised to name suffix your types with words like `Manager`, `
 
 ### Generic types
 
-Names of classes, structs, enums, enum cases, typealiases, protocols and generic types should be capitalized. Generic types' names should start with letter `T`, when `U`, `V` and so on.
+Names of classes, structs, enums, enum cases, typealiases, protocols and generic types should be capitalized. Generic types' names should start with letter `T`, then `U`, `V` and so on.
 
 ### Functions and arguments
 
@@ -261,7 +261,7 @@ it("should behave as expected") {
 
 Static code is code which logic and control from can be resolved at compile-time. Swift compiler is able to optimize predictable code to work better and faster. Try to make use of this feature and write as much static code as possible.
 
-On the other hand, dynamic code's control flow is resolved at run-time, which means it's not predictable and, as a result, can't be optimized by the compiler. Avoid using `@dynamic` and `@objc` attributes.
+On the other hand, dynamic code's control flow is resolved at run-time, which means it's not predictable and, as a result, can't be optimized by the compiler. Avoid using `dynamic` and `@objc` attributes.
 
 ## Implicit getters
 
@@ -376,7 +376,7 @@ class Polygon {
     init(numberOfSides: Int)
 }
 
-class Trinagle: Polygon {
+class Triangle: Polygon {
     init() {
         super.init(numberOfSides: 3)
     }
