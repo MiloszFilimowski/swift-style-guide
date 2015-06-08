@@ -259,7 +259,7 @@ it("should behave as expected") {
 
 ## Static vs. dynamic code
 
-Static code is code which logic and control from can be resolved at compile-time. Swift compiler is able to optimize predictable code to work better and faster. Try to make use of this feature and write as much static code as possible.
+Static code is code where logic and control can be resolved at compile-time. The Swift compiler is able to optimize predictable code to work better and faster. Try to make use of this feature and write as much static code as possible.
 
 On the other hand, dynamic code's control flow is resolved at run-time, which means it's not predictable and, as a result, can't be optimized by the compiler. Avoid using `dynamic` and `@objc` attributes.
 
