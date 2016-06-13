@@ -211,7 +211,7 @@ typealias Money = Double
 
 ## Mutability – `let` over `var`
 
-It's safer to assume that a variable is immutable, thus it's highly recommended to declare values as constants, using `let`. Immutable constants ensure their values will never change, which results in less error-prone code.
+It's safer to assume that a constant is immutable, thus it's highly recommended to declare values as constants, using `let`. Immutable constants ensure their values will never change, which results in less error-prone code.
 
 Mutable `var` variables should only be used when necessary, e.g. when you're absolutely sure you will be changing their values in the future.
 
