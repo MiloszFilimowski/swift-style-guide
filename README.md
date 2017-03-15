@@ -2,6 +2,7 @@
 
 This guide is based on the following sources:
 
+- [Swift API Guidelines](https://swift.org/documentation/api-design-guidelines/)
 - [The Swift Programming Language](https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language)
 - [Github Swift style guide](https://github.com/github/swift-style-guide)
 - [Ray Wenderlich Swift style guide](https://github.com/raywenderlich/swift-style-guide)
