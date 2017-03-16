@@ -2,6 +2,7 @@
 
 This guide is based on the following sources:
 
+- [Swift API Guidelines](https://swift.org/documentation/api-design-guidelines/)
 - [The Swift Programming Language](https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/Swift_Programming_Language)
 - [Github Swift style guide](https://github.com/github/swift-style-guide)
 - [Ray Wenderlich Swift style guide](https://github.com/raywenderlich/swift-style-guide)
@@ -50,7 +51,7 @@ import MoneyKit
 
 // 2. classes, structs, enums
 
-class Wallet {
+final class Wallet {
 
     // 2.1. public, internal properties
 
@@ -66,9 +67,9 @@ class Wallet {
     init(cash: Cash, cards: [Card], owner: Person)
     
     // 2.4. public, internal functions
-    
-    func affordsTransaction(transaction: Transaction) -> Bool
-    
+
+    func affords(transaction: Transaction) -> Bool
+
     // 2.5. private functions
     
     private func cardWithSuffiecientCash(cash: Cash) -> Card?
@@ -77,7 +78,7 @@ class Wallet {
 
 // 3. extensions, protocol implementations
 
-extension Wallet: Printable {
+extension Wallet: CustomStringConvertible {
 
     var description: String {
         return "\(owner.name) has \(cash) cash and \(cards.count) cards"
@@ -94,47 +95,47 @@ Names should be meaningful and compact, written in camelCase. Try to ask yoursel
 
 It is strongly misadvised to name suffix your types with words like `Manager`, `Helper` or `Utility` because they're meaningless and their role can be easily misinterpreted.
 
+Names of classes, structs, enums, enum cases, typealiases, protocols and generic types should be upper camel case.
+
 ### Generic types
 
-Names of classes, structs, enums, enum cases, typealiases, protocols and generic types should be capitalized. Generic types' names should start with letter `T`, then `U`, `V` and so on.
+Generic types' names should be descriptive and meaningful. Single uppercase letter such as `T`, `U`, or `V` can be used when generic type is not related in any way to the implementation.
 
 ### Functions and arguments
 
-Function names should be as descriptive and meaningful as possible. Try to express its intent in the name, by keeping it compact at the same time.
+Function names should be as descriptive and meaningful as possible performs. Try to express its intent in the name, by keeping it compact at the same time.
 
-Arguments should also be descriptive. Remember that you can use argument labels, which may be more meaningful to a user.
-
-The first argument's name can be a part of the function's name...
+Arguments should also be descriptive and should help potential user to understand function's intent.
 
 ```swift
-func convertPoint(point: Point, fromView view: View) -> Point
+// preferred
+
+func convert(point: Point, fromView view: View) -> Point
 ```
 
-... or its label can be explicitly required.
-
 ```swift
-func convert(#point: Point, toView view: View) -> Point
+// not preferred
+
+func convertPoint(point: Point, toView view: View) -> Point
 ```
 
 Use default values for arguments where a function expects any value or some specific value most of the time. If a particular argument is not required for a function, it's good to make it optional and `nil` by default.
 
 ## Closures
 
-If the last argument of a function is a closure, use trailing closure syntax. 
-
-Trailing closure syntax should be used if a function accepts a closure as its last argument. If it's its only argument, parentheses may be ommited. Unused closure arguments should be replaced with `_` (or fully ommited if no arguments are used). Argument types should be inferred.
+Trailing closure syntax should be used if a function accepts a closure as its last argument. If it is its only argument, parentheses may be omitted. Unused closure arguments should be replaced with `_` (or fully omitted if no arguments are used). Argument types should be inferred.
 
 ```swift
-func executeRequest<T>(request: Request<T>, completion: (T, Error?) -> Void)
+func execute<Result>(request: Request<Result>, completion: (Result, Error?) -> Void)
 
-executeRequest(someRequest) { (result, _) in /* ... */ }
+execute(request: someRequest) { (result, _) in /* ... */ }
 ```
 
 Use implicit `return` in one-line closures with clear context.
 
 ```swift
 let numbers = [1, 2, 3, 4, 5]
-let even = filter(numbers) { $0 % 2 == 0 }
+let even = numbers.filter { $0 % 2 == 0 }
 ```
 
 Also, remember that global functions are closures and sometimes it's convenient to pass a function name as a closure.
@@ -143,17 +144,17 @@ Also, remember that global functions are closures and sometimes it's convenient 
 func isPositive(number: Int) -> Bool
 
 let numbers = [-1, 2, 3, -4, 5]
-let positive = filter(numbers, isPositive)
+let positive = numbers.filter(isPositive)
 ```
 
 ## Types
 
-Try to use native Swift types before you come up with your own. Every type can be extended, so sometimes instead of introducing new types, it's convenient to extend or alias existing ones.
+Try to use native Swift types before you come up with your own. Every type can be extended, so sometimes instead of introducing new type, it's convenient to extend or alias existing ones.
 
 Remember that Objective-C classes that have native Swift equivalents are not automatically bridged, e.g. `NSString` is not implicitly bridged to `String` in the following example.
 
 ```swift
-func lowercase(string String) -> String
+func lowercase(string: String) -> String
 
 let string: NSString = /* ... */
 
@@ -167,7 +168,7 @@ Types should be inferred whenever possible. Don't duplicate type identifier if i
 // preferred
 
 let name = "John Appleseed"
-let planets = [.Mars, .Saturn]
+let planets: [Planet] = [.Mars, .Saturn]
 let colors = ["red": 0xff0000, "green": 0x00ff00]
 ```
 
@@ -175,7 +176,7 @@ let colors = ["red": 0xff0000, "green": 0x00ff00]
 // not preferred
 
 let name: String = "Amanda Smith"
-let planets: [Planet] = [.Venus, .Earth]
+let planets: [Planet] = [Planet.Venus, Planet.Earth]
 let colors: [String: UInt32] = ["blue": 0x0000ff, "white": 0xffffff]
 ```
 
@@ -220,10 +221,10 @@ Mutable `var` variables should only be used when necessary, e.g. when you're abs
 Force unwrapping should be avoided as much as possible. Implicitly unwrapped optionals lead to less safe code and can cause unwanted crashes. Use optional chaining or `if-let` bindings to unwrap optional values.
 
 ```swift
-let user: User? = findUserById(123)
+let user: User? = findUser(id: 123)
 
 if let user = user {
-    println("found user \(user.name) with id \(user.id)")
+    print("found user \(user.name) with id \(user.id)")
 }
 ```
 
@@ -233,7 +234,7 @@ Unwrapping several optionals in nested `if-let` statements is forbidden, as it l
 let name: String?
 let age: Int?
 
-if let name = name, age = age where age >= 13 {
+if let name = name, age = age, age >= 13 {
     /* ... */
 }
 ```
@@ -259,13 +260,13 @@ it("should behave as expected") {
 
 ## Static vs. dynamic code
 
-Static code is code where logic and control can be resolved at compile-time. The Swift compiler is able to optimize predictable code to work better and faster. Try to make use of this feature and write as much static code as possible.
+Static code is a code where logic and control can be resolved at compile-time. The Swift compiler is able to optimize predictable code to work better and faster. Try to make use of this feature and write as much static code as possible.
 
-On the other hand, dynamic code's control flow is resolved at run-time, which means it's not predictable and, as a result, can't be optimized by the compiler. Avoid using `dynamic` and `@objc` attributes.
+On the other hand, dynamic code's control flow is resolved at run-time, which means it's not predictable and, as a result, can't be optimized by the compiler. Avoid using `dynamic` and `@objc` attributes unless you really need them.
 
 ## Implicit getters
 
-Read-only computed properties don't need an explicit getter, thus it can be ommited. This also applies to read-only subscripts.
+Read-only computed properties don't need an explicit getter, thus it can be omitted. This also applies to read-only subscripts.
 
 ```swift
 struct Person {
@@ -290,31 +291,15 @@ public extension String {
 }
 ```
 
-Use access control modifiers only if necessary. Pay attention to variables. Use `private` or `private(set)` appropriately. Don't add modifiers if they are are already a default.
-
-```swift
-// preferred
-
-extension String {
-    var uppercaseString: String
-}
-```
-
-```swift
-// not preferred
-
-internal extension String {
-    var uppercaseString: String
-}
-```
+Use access control modifiers only if necessary. Pay attention to variables. Use `fileprivate`, `private` or `private(set)` appropriately. Default access control modifiers can be added for clarity, especially at the top level declaration.
 
 ## Explicit references to `self`
 
 Explicit references to `self` should only take place in closures and when the language requires it.
 
 ```swift
-struct Person {
-    
+final class Person {
+
     let firstName: String
     let lastName: String
     
@@ -348,13 +333,13 @@ On the other hand, reference types, such as classes, are passed by referencing t
 Reference types are great to represent **behavior** in the app.
 
 ```swift
-class FileStream {
+final class FileStream {
     let file: File
     var currentPosition: StreamPosition
 }
 ```
 
-Keep in mind that inheritance is not a sufficient argument to use classes. You should try to compose your types using protocols.
+Keep in mind that inheritance is not a sufficient argument to use classes. You should try to compose your types using protocols. Therefore try to declare `class` as `final` by default.
 
 ```swift
 // preferred
@@ -371,12 +356,12 @@ struct Triangle: Polygon {
 ```swift
 // not preferred
 
-class Polygon {
+final class Polygon {
     let numberOfSides: Int
     init(numberOfSides: Int)
 }
 
-class Triangle: Polygon {
+final class Triangle: Polygon {
     init() {
         super.init(numberOfSides: 3)
     }
